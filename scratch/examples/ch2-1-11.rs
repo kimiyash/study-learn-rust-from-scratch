@@ -5,27 +5,31 @@ enum List<T> {
     Node { data: T, next: Option<Box<List<T>>> },
 }
 
-// fn add_node<T>(n: List<T>, data: T) {
-//     let n_ = List::<T>::Node {
-//         data: data.clone()
-//         next: 
-//     }
-// }
+fn add_node<T: std::clone::Clone>(mut n: &mut List<T>, data: T) {
+    loop {
+        if let List::Node { ref mut next, .. } = n {
+            if let Some(next_) = next {
+                n = next_;
+            } else {
+                *next = Some(Box::new(List::<T>::Node {
+                    data: data.clone(),
+                    next: None,
+                }));
+                break;
+            }
+        }
+    }
+}
 
 fn main() {
-    let n1 = List::<u32>::Node {
+    let mut n1 = List::<u32>::Node {
         data: 0,
         next: None,
     };
-    let n2 = List::<u32>::Node {
-        data: 10,
-        next: Some(Box::<List<u32>>::new(n1)),
-    };
-    let n3 = List::<u32>::Node {
-        data: 20,
-        next: Some(Box::<List<u32>>::new(n2)),
-    };
-    let mut n = &mut n3.clone();
+    add_node(&mut n1, 10);
+    add_node(&mut n1, 20);
+    add_node(&mut n1, 30);
+    let mut n = &mut n1.clone();
     loop {
         if let List::Node { data, ref mut next } = n {
             println!("{}, {:p}", data, next);
@@ -35,9 +39,5 @@ fn main() {
                 break;
             }
         }
-    }
-
-    if let List::Node { data, next } = n3 {
-        println!("{} {:p}", data, &next);
     }
 }
