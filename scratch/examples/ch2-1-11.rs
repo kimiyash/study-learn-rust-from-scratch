@@ -29,8 +29,7 @@ fn main() {
     loop {
         if let List::Node { data, ref mut next } = n {
             println!("{}, {:p}", data, next);
-            let next_ref = next.as_deref_mut();
-            if let Some(next_) = next_ref {
+            if let Some(next_) = next {
                 n = next_;
             } else {
                 break;
