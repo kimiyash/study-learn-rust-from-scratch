@@ -40,6 +40,8 @@ fn main() {
         }
         _ => ()
     }
+    println!("{:?}", spec);
+    println!("{:#?}", spec);
 
     // let a = Some(1);
     // assert_matches!(a, Some(_));
@@ -51,5 +53,14 @@ fn main() {
     //      |
     //      = note: see issue #82775 <https://github.com/rust-lang/rust/issues/82775> for more information
   
-  
+    println!();
+
+    let n = 56;
+    println!("{}", n);
+    println!("{:>04}", n);
+    println!("{:#x}", n);
+    println!("{:x}", n);
+    println!("{:#016x}", n);
+    println!("{:#o}", n);
+    println!("{:#b}", n); 
 }
