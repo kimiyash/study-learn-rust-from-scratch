@@ -1,8 +1,12 @@
+// use std::assert_matches::assert_matches;
+
+#[derive(Debug)]
 enum Storage {
     HDD { size: u32, rpm: u32 },
     SSD(u32),
 }
 
+#[derive(Debug)]
 struct PCSpec {
     cpus: u16,
     memory: u32,
@@ -36,4 +40,16 @@ fn main() {
         }
         _ => ()
     }
+
+    // let a = Some(1);
+    // assert_matches!(a, Some(_));
+    //     error[E0658]: use of unstable library feature 'assert_matches'
+    //     --> examples/ch2-1-11-5.rs:44:5
+    //      |
+    //   44 |     assert_matches!(a, Some(_));
+    //      |     ^^^^^^^^^^^^^^
+    //      |
+    //      = note: see issue #82775 <https://github.com/rust-lang/rust/issues/82775> for more information
+  
+  
 }
