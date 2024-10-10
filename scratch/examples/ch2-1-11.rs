@@ -25,29 +25,12 @@ fn main() {
         data: 20,
         next: Some(Box::<List<u32>>::new(n2)),
     };
-    // let mut n = n3; 
-    // loop {
-    //     match n {
-    //         List::Node { data, next} => {
-    //             println!("{}, {:p}", data, next);
-    //             n = *next;
-    //         }
-    //         List::Nil => break
-    //     }
-    // }
-    // let mut n = &mut n3.clone();
-    // while let List::Node { data, next } = n {
-    //     println!("{} {:p}", data, next);
-    //     if let Some(next_) = next {
-    //         n = next_.deref_mut();
-    //     }
-    // }
-    let mut n = n3;
-    let mut n = &mut n;
+    let mut n = &mut n3.clone();
     loop {
-        if let List::Node { data, next } = n {
+        if let List::Node { data, ref mut next } = n {
             println!("{}, {:p}", data, next);
-            if let Some(ref mut next_) = next.deref_mut() {
+            let next_ref = next.as_deref_mut();
+            if let Some(next_) = next_ref {
                 n = next_;
             } else {
                 break;
