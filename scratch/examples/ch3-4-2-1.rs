@@ -22,9 +22,7 @@ fn main() {
     }
     println!("{:?}", xy);
 
-
-    
-    // 変数の例
+    // 変数借用規則の例
     let mut a = 10;
     let b = &mut a;
     // if a == 10 { // ここでエラー
