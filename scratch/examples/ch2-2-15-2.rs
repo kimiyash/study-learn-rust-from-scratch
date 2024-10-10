@@ -20,7 +20,7 @@ impl XOR64 {
     }
 }
 
-const NUM: usize = 2000000;
+const NUM: usize = 200000000;
 
 fn randomse_vec() -> (Vec<u64>, Vec<u64>) {
     let mut v1 = Vec::new();
@@ -78,6 +78,12 @@ fn mutlti_thread() {
 }
 
 fn main() {
-    singl_thread();
-    mutlti_thread();
+    let handler1 = std::thread::spawn(|| {
+        singl_thread();
+    });
+    let handler2 = std::thread::spawn(|| {
+        mutlti_thread();
+    });
+    let _ = handler1.join();
+    let _ = handler2.join();
 }
