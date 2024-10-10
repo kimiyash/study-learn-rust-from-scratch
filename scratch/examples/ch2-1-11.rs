@@ -3,8 +3,8 @@ enum List<T> {
     Node { data: T, next: Option<Box<List<T>>> },
 }
 
-fn add_node<T: std::clone::Clone>(n: &mut List<T>, data: T) -> &mut List<T> {
-    let mut current = n;
+fn add_node<T: std::clone::Clone>(node: &mut List<T>, data: T) -> &mut List<T> {
+    let mut current = node;
     loop {
         let List::Node { ref mut next, .. } = current;
         if let Some(next) = next {
@@ -28,6 +28,7 @@ fn main() {
     let new_node = add_node(new_node, 20);
     let new_node = add_node(new_node, 30);
     add_node(new_node, 40);
+    add_node(new_node, 50);
 
     let mut n = &mut n1.clone();
     loop {
