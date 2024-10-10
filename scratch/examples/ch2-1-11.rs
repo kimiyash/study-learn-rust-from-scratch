@@ -1,22 +1,20 @@
-use std::ops::DerefMut;
-
 #[derive(Debug, Clone)]
 enum List<T> {
     Node { data: T, next: Option<Box<List<T>>> },
 }
 
-fn add_node<T: std::clone::Clone>(mut n: &mut List<T>, data: T) {
+fn add_node<T: std::clone::Clone>(n: &mut List<T>, data: T) -> &mut List<T> {
+    let mut current = n;
     loop {
-        if let List::Node { ref mut next, .. } = n {
-            if let Some(next_) = next {
-                n = next_;
-            } else {
-                *next = Some(Box::new(List::<T>::Node {
-                    data: data.clone(),
-                    next: None,
-                }));
-                break;
-            }
+        let List::Node { ref mut next, .. } = current;
+        if let Some(next) = next {
+            current = next;
+        } else {
+            *next = Some(Box::new(List::<T>::Node {
+                data: data.clone(),
+                next: None,
+            }));
+            break next.as_mut().unwrap()
         }
     }
 }
@@ -26,18 +24,21 @@ fn main() {
         data: 0,
         next: None,
     };
-    add_node(&mut n1, 10);
-    add_node(&mut n1, 20);
-    add_node(&mut n1, 30);
+    let new_node = add_node(&mut n1, 10);
+    let new_node = add_node(new_node, 20);
+    let new_node = add_node(new_node, 30);
+    add_node(new_node, 40);
+
     let mut n = &mut n1.clone();
     loop {
-        if let List::Node { data, ref mut next } = n {
-            println!("{}, {:p}", data, next);
-            if let Some(next_) = next {
-                n = next_;
-            } else {
-                break;
-            }
+        let List::Node { data, next } = n;
+
+        println!("{}, {:p}", data, next);
+
+        if let Some(next_) = next {
+            n = next_;
+        } else {
+            break;
         }
     }
 }
