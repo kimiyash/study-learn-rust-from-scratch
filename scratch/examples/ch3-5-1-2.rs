@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 fn main() {
     let x = Arc::new(Mutex::new(100_000));
-    
+
     let x1_clone = Arc::clone(&x);
     let h1 = std::thread::spawn(move || {
         let mut guard = x1_clone.lock().unwrap();
@@ -15,8 +15,14 @@ fn main() {
         *guard -= 10_000;
     });
 
-    h1.join().unwrap();
-    h2.join().unwrap();
+    match h1.join() {
+        Ok(_) => (),
+        Err(_) => return,
+    }
+    match h2.join() {
+        Ok(_) => (),
+        Err(_) => return,
+    }
 
     println!("{}", x.lock().unwrap());
     {
