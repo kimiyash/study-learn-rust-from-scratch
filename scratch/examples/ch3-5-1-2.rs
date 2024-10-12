@@ -15,11 +15,13 @@ fn main() {
         *guard -= 10_000;
     });
 
-    match h1.join().unwrap();
-    match h2.join().unwrap();
+    h1.join().unwrap();
+    h2.join().unwrap();
 
     println!("{}", x.lock().unwrap());
     {
+        let x = x.clone();
+        let x = x.clone();
         let gurad1 = x.lock().unwrap();
         println!("{}", *gurad1);
     }
