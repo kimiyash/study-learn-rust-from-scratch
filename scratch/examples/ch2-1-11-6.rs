@@ -26,5 +26,4 @@ fn main() {
     for (n, m) in v.iter().zip(s.iter()) {
         println!("{n}, {m}");
     }
-
 }

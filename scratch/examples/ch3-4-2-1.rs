@@ -16,7 +16,7 @@ fn main() {
     }
     println!("{:?}", xy);
     // コンパイルエラーとなる場合下記のように書くといいらしい
-    let XY { x, y} = &mut xy;
+    let XY { x, y } = &mut xy;
     for elm in x {
         y.push(*elm * *elm);
     }
@@ -34,12 +34,13 @@ fn main() {
     //*b = 1; // エラー、&mut はムーブセマンティクス
     *d = 1;
     // if a == 1 {  // 下の行で d の中を参照しているので a は読み込めない
-    //     // println!("{a}"); 
+    //     // println!("{a}");
     // }
     if *d == 1 {
         println!("{d}");
     }
-    if a == 1 {  // ここなら a は読み込める
-        println!("{a}"); 
+    if a == 1 {
+        // ここなら a は読み込める
+        println!("{a}");
     }
 }

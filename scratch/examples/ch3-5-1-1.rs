@@ -5,4 +5,3 @@ fn main() {
     let x = v.clone();
     let y = v.clone();
 }
-

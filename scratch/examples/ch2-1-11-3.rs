@@ -9,7 +9,10 @@ fn hello() {
         println!("{:?}", msg);
     }
 
-    let msg = Msg {msg1: "hello", msg2: "world"};
+    let msg = Msg {
+        msg1: "hello",
+        msg2: "world",
+    };
     print_msg(&msg);
 }
 

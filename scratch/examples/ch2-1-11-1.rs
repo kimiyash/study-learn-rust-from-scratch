@@ -14,7 +14,7 @@ fn add_node<T: std::clone::Clone>(n: &mut List<T>, data: T) -> &mut List<T> {
                 data: data.clone(),
                 next: None,
             }));
-            break next.as_mut().unwrap()
+            break next.as_mut().unwrap();
         }
     }
 }

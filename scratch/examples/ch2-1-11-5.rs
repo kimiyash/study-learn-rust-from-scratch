@@ -19,7 +19,8 @@ fn main() {
         memory: 3,
         storage: Storage::SSD(512),
     };
-    match &spec { // match で値が消費されてしまうので参照をつかう
+    match &spec {
+        // match で値が消費されてしまうので参照をつかう
         PCSpec {
             storage: Storage::SSD(512),
             ..
@@ -28,17 +29,17 @@ fn main() {
         }
         PCSpec {
             cpus: 4 | 8, // 4 か 8
-            memory: m, // mにメモリサイズが記録される
+            memory: m,   // mにメモリサイズが記録される
             storage: _,
         } => {
             println!("4 or 8 CPUs");
             println!("{}GiB memory", *m);
         }
-        PCSpec { memory: m, ..} if *m < 4 => {
+        PCSpec { memory: m, .. } if *m < 4 => {
             // m が 4未満
             println!("4Gib より少ないメモリ")
         }
-        _ => ()
+        _ => (),
     }
     println!("{:?}", spec);
     println!("{:#?}", spec);
@@ -52,7 +53,7 @@ fn main() {
     //      |     ^^^^^^^^^^^^^^
     //      |
     //      = note: see issue #82775 <https://github.com/rust-lang/rust/issues/82775> for more information
-  
+
     println!();
 
     let n = 56;
@@ -62,5 +63,5 @@ fn main() {
     println!("{:x}", n);
     println!("{:#016x}", n);
     println!("{:#o}", n);
-    println!("{:#b}", n); 
+    println!("{:#b}", n);
 }
