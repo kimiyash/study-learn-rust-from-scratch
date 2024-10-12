@@ -1,4 +1,4 @@
-use std::{io::SeekFrom, iter::Iterator};
+use std::{iter::Iterator};
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::prelude::*, path::Path};
 
@@ -88,13 +88,13 @@ fn main() {
     f.write_all(yaml.as_bytes()).unwrap();
 
     println!();
-    let mut f = File::open("test.yml").unwrap();
+    let mut f = File::open(path).unwrap();
     let mut yaml = String::new();
     f.read_to_string(&mut yaml).unwrap();
     println!("{yaml}");
 
     println!();
-    let mut f = File::open("test.yml").unwrap();
+    let mut f = File::open(path).unwrap();
     let mut v = Vec::new();
     f.read_to_end(&mut v).unwrap();
     let yaml = String::from_utf8(v).unwrap();
