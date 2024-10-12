@@ -1,4 +1,5 @@
 use std::iter::Iterator;
+use serde::{Deserialize, Serialize};
 
 // 不変イテレータ
 struct ListIter<'a, T> {
@@ -18,7 +19,7 @@ impl<'a, T> Iterator for ListIter<'a, T> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 enum List<T> {
     Node { data: T, next: Box<List<T>> },
     Nil,
@@ -55,4 +56,29 @@ fn main() {
     println!("{}", it.next().unwrap());
     println!("{}", it.next().unwrap());
     println!("{}", it.next().unwrap_or(&999));
+
+    // Jsonにシリアライズ
+    let js = serde_json::to_string(&list).unwrap();
+    println!("{js}");
+
+    // YAMLにシリアライズ
+    let yaml = serde_yaml::to_string(&list).unwrap();
+    println!("{yaml}");
+
+    // MessagePackにシリアライズ
+    let msgpack = rmp_serde::to_vec(&list).unwrap();
+    println!("MessagePack: {} bytes", msgpack.len());
+
+    // JSONからデシリアライズ
+    let js = serde_json::from_str::<List<i32>>(&js).unwrap();
+    println!("{:#?}", js);
+
+    // YAML からデシリアライズ
+    let yaml = serde_yaml::from_str::<List<i32>>(&yaml).unwrap();
+    println!("{:#?}", yaml);
+
+    // MessagePack からデシリアライズ
+    let msgpack = rmp_serde::from_slice::<List<i32>>(&msgpack).unwrap();
+    println!("{:#?}", msgpack);
+
 }
