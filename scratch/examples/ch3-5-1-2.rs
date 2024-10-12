@@ -15,14 +15,8 @@ fn main() {
         *guard -= 10_000;
     });
 
-    match h1.join() {
-        Ok(_) => (),
-        Err(_) => return,
-    }
-    match h2.join() {
-        Ok(_) => (),
-        Err(_) => return,
-    }
+    match h1.join().unwrap();
+    match h2.join().unwrap();
 
     println!("{}", x.lock().unwrap());
     {
