@@ -44,10 +44,7 @@ impl<T> List<T> {
 }
 
 fn main() {
-    let list = List::new();
-    let list = list.cons(1);
-    let list = list.cons(2);
-    let list = list.cons(3);
+    let list = List::new().cons(1).cons(2).cons(3);
 
     for data in list.iter() {
         println!("{data}");
