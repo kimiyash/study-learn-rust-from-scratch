@@ -54,5 +54,4 @@ fn main() {
         hdl.join().unwrap();
     }
     staff.join().unwrap();
-
 }
