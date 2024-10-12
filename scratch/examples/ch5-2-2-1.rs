@@ -33,8 +33,9 @@ mod b {
 
 fn main() {
     // let a = a::TypeA; // 子のプライベートな要素は見えない
-    let b = b::TypeB;
+    // let z = a::a_2::TypeA2 { a: Box::new() } // 子のプライベートな要素はみれない
+    let b = b::TypeB; 
 
-    // let b1 = b::b_1::TypeB1; // このプライベートなモジュール b_1 は見えない
+    // let b1 = b::b_1::TypeB1; // 子のプライベートなモジュール b_1 は見えない
     let b2 = b::b_2::TypeB2; // パブリックな孫 b_2 のパブリックな要素 TypeB2 は見える
 }
