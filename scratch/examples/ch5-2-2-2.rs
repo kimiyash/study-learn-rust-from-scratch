@@ -29,5 +29,4 @@ mod b {
     }
 }
 
-
 fn main() {}
