@@ -1,5 +1,6 @@
-use std::iter::Iterator;
+use std::{io::SeekFrom, iter::Iterator};
 use serde::{Deserialize, Serialize};
+use std::{fs::File, io::prelude::*, path::Path};
 
 // 不変イテレータ
 struct ListIter<'a, T> {
@@ -81,4 +82,21 @@ fn main() {
     let msgpack = rmp_serde::from_slice::<List<i32>>(&msgpack).unwrap();
     println!("{:#?}", msgpack);
 
+    let yaml = serde_yaml::to_string(&list).unwrap();
+    let path = Path::new("test.yml");
+    let mut f = File::create(path).unwrap();
+    f.write_all(yaml.as_bytes()).unwrap();
+
+    println!();
+    let mut f = File::open("test.yml").unwrap();
+    let mut yaml = String::new();
+    f.read_to_string(&mut yaml).unwrap();
+    println!("{yaml}");
+
+    println!();
+    let mut f = File::open("test.yml").unwrap();
+    let mut v = Vec::new();
+    f.read_to_end(&mut v).unwrap();
+    let yaml = String::from_utf8(v).unwrap();
+    println!("{yaml}");
 }
