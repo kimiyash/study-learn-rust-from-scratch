@@ -1,7 +1,10 @@
 fn main() {
     println!("{}", a() || b());
+    println!();
     println!("{}", a() | b());
+    println!();
     println!("{}", c().is_ascii() || a());
+    println!();
     println!("{}", c().is_ascii() | a());
 }
 
