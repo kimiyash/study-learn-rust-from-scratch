@@ -47,3 +47,63 @@ impl Display for ParserError {
 }
 
 impl Error for ParseError {}
+
+/// 特殊文字のエスケープ
+fn parser_escape(pos: usize, c: char) -> Result<AST, ParseError> {
+    match c {
+        '\\' | '(' | ')' | '|' | '+' | '*' | '?' => Ok(AST::Char(c)),
+        _ => {
+            let err = ParseError::InvalidEscape(pos, c);
+            Err(err)
+        }
+    }
+}
+
+/// parse_plus_star_question 関数で利用するための列挙型
+enum PSQ {
+    Plus,
+    Star,
+    Question,
+}
+
+/// +, *, ? をASTに変換
+///
+/// 後置記法で、+. *. ? の前にパターンがない場合はエラー。
+///
+/// 例: *ab, abc|+ などはエラー
+fn parse_plus_star_question(
+    seq: &mut Vec<AST>,
+    ast_type: PSQ,
+    pos: usize,
+) -> Result<(), ParseError> {
+    let Some(prev) = seq.pop() {
+        let ast = match ast_type {
+            PSQ::Plus => AST::Plus(Box::new(prev)),
+            PSQ::Star => AST::Star(Box::new(prev)),
+            PSQ::Question => AST::Question(Box::new(prev)),
+        };
+        seq.push(ast);
+        Ok(())
+    } else {
+        Err(ParseError::NoPrev(pos))
+    }
+}
+
+/// Or で結合された複数の式を AST に変換
+///
+/// たとえば、abc|def|ghi は、AST::Or("abc", AST::Or("def, ghi")) という AST となる。
+fn fold_or(mut seq_or: Vec<AST>) -> Option<AST> {
+    if seq_or.len() > 1 {
+        // seq_or の要素が複数ある場合は、Or で式を結合
+        let mut ast = seq_or.pop().unwrap();
+        seq_or.reverse();
+        for s in seq_or {
+            ast = AST:Or(Box::new(s), Box::new(ast));
+        }
+        Some(ast)
+    } else {
+        // seq_or の要素が１つのみの場合は、Or ではなく最初の値を返す
+        seq_or.pop()
+    }
+}
+
