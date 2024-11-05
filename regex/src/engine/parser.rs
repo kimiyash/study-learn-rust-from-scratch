@@ -133,7 +133,7 @@ pub fn parse(expr: &str) -> Result<AST, ParseErro> {
                         // 現在のコンテキストを空の状態にする
                         let prev = take(&mut seq);
                         let prev_or = take(&mut seq_or);
-                        stack.push(prev, prev_or);
+                        stack.push((prev, prev_or));
                     }
                     ')' => {
                         // 現在のコンテキストをスタックからポップ (6)
