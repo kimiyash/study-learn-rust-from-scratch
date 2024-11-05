@@ -2,7 +2,7 @@
 use std::{
     error::Error,
     fmt::{self, Display},
-    mem::take
+    mem::take,
 };
 
 /// 抽象構文木を表現するための型
@@ -121,7 +121,8 @@ pub fn parse(expr: &str) -> Result<AST, ParseError> {
     let mut stack = Vec::new(); // コンテキストのスタック
     let mut state = ParseState::Char; // 現在の状態
 
-    for (i, c) in expr.chars().enumerate() { // (3)
+    for (i, c) in expr.chars().enumerate() {
+        // (3)
         match &state {
             ParseState::Char => {
                 match c {
@@ -157,7 +158,8 @@ pub fn parse(expr: &str) -> Result<AST, ParseError> {
                         }
                     }
                     '|' => {
-                        if seq.is_empty() { // (7)
+                        if seq.is_empty() {
+                            // (7)
                             // "||", "(|abc)" などと、式が空の場合はエラー
                             return Err(ParseError::NoPrev(i));
                         } else {

@@ -9,14 +9,14 @@ impl SafeAdd for usize {
 }
 
 pub fn safe_add<T, F, E>(dst: &mut T, src: &T, f: F) -> Result<(), E>
-    where
-        T: SafeAdd,
-        F: Fn() -> E,
+where
+    T: SafeAdd,
+    F: Fn() -> E,
 {
     if let Some(n) = dst.safe_add(src) {
         *dst = n;
         Ok(())
-    } else  {
+    } else {
         Err(f())
     }
 }

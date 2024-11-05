@@ -55,8 +55,7 @@ fn eval_depth(
                 pc = *addr;
             }
             Instruction::Split(addr1, addr2) => {
-                if eval_depth(inst, line, *addr1, sp)? ||
-                   eval_depth(inst, line, *addr2, sp)? {
+                if eval_depth(inst, line, *addr1, sp)? || eval_depth(inst, line, *addr2, sp)? {
                     return Ok(true);
                 } else {
                     return Ok(false);
