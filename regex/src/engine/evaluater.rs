@@ -4,7 +4,7 @@ use std::{
     collections::VecDeque,
     error::Error,
     fmt::{self, Display},
-}
+};
 
 #[derive(Debug)]
 pub enum EvalError {
@@ -26,21 +26,21 @@ fn eval_depth(
     inst: &[Instruction],
     line: &[char],
     mut pc: usize,
-    mut sp: usie,
+    mut sp: usize,
 ) -> Result<bool, EvalError> {
     loop {
         let next = if let Some(i) = inst.get(pc) {
             i
         } else {
-            return Err(Box::new(EvalError::InvalidPC));
+            return Err(EvalError::InvalidPC);
         };
 
         match next {
             Instruction::Char(c) => {
                 if let Some(sp_c) = line.get(sp) {
                     if c == sp_c {
-                        safe_add(&mut pc, &1, || Box::new(EvalError::PCOverFlow))?;
-                        safe_add(&mut sp, &1, || Box::new(EvalError::SPOverFlow))?;
+                        safe_add(&mut pc, &1, || EvalError::PCOverFlow)?;
+                        safe_add(&mut sp, &1, || EvalError::SPOverFlow)?;
                     } else {
                         return Ok(false);
                     }
@@ -85,19 +85,15 @@ fn eval_width(inst: &[Instruction], line: &[char]) -> Result<bool, EvalError> {
                     if c == sp_c {
                         safe_add(&mut pc, &1, || EvalError::PCOverFlow)?;
                         safe_add(&mut sp, &1, || EvalError::SPOverFlow)?;
-                    } else {
-                        if ctx.is_empty() {
-                            return Ok(false);
-                        } else {
-                            pop_ctx(&mut pc, &mut sp, &mut ctx)?;
-                        }
-                    }
-                } else {
-                    if ctx.is_empty() {
+                    } else if ctx.is_empty() {
                         return Ok(false);
                     } else {
                         pop_ctx(&mut pc, &mut sp, &mut ctx)?;
                     }
+                } else if ctx.is_empty() {
+                    return Ok(false);
+                } else {
+                    pop_ctx(&mut pc, &mut sp, &mut ctx)?;
                 }
             }
             Instruction::Match => {
@@ -117,6 +113,20 @@ fn eval_width(inst: &[Instruction], line: &[char]) -> Result<bool, EvalError> {
             ctx.push_back((pc, sp));
             pop_ctx(&mut pc, &mut sp, &mut ctx)?;
         }
+    }
+}
+
+fn pop_ctx(
+    pc: &mut usize,
+    sp: &mut usize,
+    ctx: &mut VecDeque<(usize, usize)>,
+) -> Result<(), EvalError> {
+    if let Some((p, s)) = ctx.pop_back() {
+        *pc = p;
+        *sp = s;
+        Ok(())
+    } else {
+        Err(EvalError::InvalidContext)
     }
 }
 

@@ -9,7 +9,7 @@
 //! regex::do_matching(expr, line, true); // 深さ優先探索でマッチング
 //! regex::print(expr); 正規表現の AST と命令列を表示
 //! ```
-mod engin;
+mod engine;
 mod helper;
 
-pub use engin::{do_matching, print};
+pub use engine::{do_matching, print};

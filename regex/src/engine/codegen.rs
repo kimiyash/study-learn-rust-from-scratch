@@ -1,5 +1,5 @@
-use super::{parser:AST, Instruction};
-use crate::helpser::safe_add,
+use super::{parser::AST, Instruction};
+use crate::helper::safe_add;
 use std::{
     error::Error,
     fmt::{self, Display},
@@ -51,7 +51,7 @@ impl Generator {
         safe_add(&mut self.pc, &1, || CodeGenError::PCOverFlow)
     }
 
-    fn gen_expr(&mut self, ast: &AST) -> Result<(). CodeGenError> {
+    fn gen_expr(&mut self, ast: &AST) -> Result<(), CodeGenError> {
         match ast {
             AST::Char(c) => self.gen_char(*c)?,
             AST::Or(e1, e2) => self.gen_or(e1, e2)?,
@@ -108,7 +108,7 @@ impl Generator {
         if let Some(Instruction::Split(_, l2)) = self.insts.get_mut(split_addr) {
             *l2 = self.pc;
         } else {
-            return Err(Box::new(CodeGenError::FailOr));
+            return Err(CodeGenError::FailOr);
         }
 
         // L2: e2 のコード (6)
@@ -118,7 +118,7 @@ impl Generator {
         if let Some(Instruction::Jump(l3)) = self.insts.get_mut(jmp_addr) {
             *l3 = self.pc;
         } else {
-            return Err(Box::new(CodeGenError::FailOr));
+            return Err(CodeGenError::FailOr);
         }
 
         Ok(())
@@ -202,10 +202,5 @@ impl Generator {
         } else {
             Err(CodeGenError::FailStar)
         }
-    }
-
-    /// プログラムカウンタをインクリメント
-    fn inc_pc(&mut self) -> Result<(), CodeGenError> {
-        safe_add(&mut self.pc, &1, || CodeGenError::PCOverFlow)
     }
 }

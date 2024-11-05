@@ -4,14 +4,14 @@ pub trait SafeAdd: Sized {
 
 impl SafeAdd for usize {
     fn safe_add(&self, n: &Self) -> Option<Self> {
-        self.check_add(*n)
+        self.checked_add(*n)
     }
 }
 
 pub fn safe_add<T, F, E>(dst: &mut T, src: &T, f: F) -> Result<(), E>
     where
         T: SafeAdd,
-        T: Fn() -> E,
+        F: Fn() -> E,
 {
     if let Some(n) = dst.safe_add(src) {
         *dst = n;

@@ -1,7 +1,7 @@
 //! 正規表現の式をパースし、抽象構文木に変換
 use std::{
     error::Error,
-    fmt::{self, Display}
+    fmt::{self, Display},
     mem::take
 };
 
@@ -17,7 +17,7 @@ pub enum AST {
 }
 
 #[derive(Debug)]
-pub enum ParserError {
+pub enum ParseError {
     InvalidEscape(usize, char), // 誤ったエスケープシーケンス
     InvalidRightParen(usize),   // 開き括弧なし
     NoPrev(usize),              // +, |, *, ? の前に式がない
@@ -26,10 +26,10 @@ pub enum ParserError {
 }
 
 /// パースエラーを表示するために、Displayトレイトを実装
-impl Display for ParserError {
-    fn fmt(&self, &mut :fmt::Formatter<'_>) -> fmt::Result {
+impl Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ParserError::InvalidEscape(pos, c) => {
+            ParseError::InvalidEscape(pos, c) => {
                 write!(f, "ParseError: invalid escape: pos = {pos}, char = `{c}`")
             }
             ParseError::InvalidRightParen(pos) => {
@@ -39,7 +39,7 @@ impl Display for ParserError {
                 write!(f, "ParseError: no previous expression: pos = {pos}")
             }
             ParseError::NoRightParen => {
-                write!(f, "ParseError: no right parenthesis}")
+                write!(f, "ParseError: no right parenthesis")
             }
             ParseError::Empty => write!(f, "ParseError: empty expression"),
         }
@@ -49,7 +49,7 @@ impl Display for ParserError {
 impl Error for ParseError {}
 
 /// 特殊文字のエスケープ
-fn parser_escape(pos: usize, c: char) -> Result<AST, ParseError> {
+fn parse_escape(pos: usize, c: char) -> Result<AST, ParseError> {
     match c {
         '\\' | '(' | ')' | '|' | '+' | '*' | '?' => Ok(AST::Char(c)),
         _ => {
@@ -76,7 +76,7 @@ fn parse_plus_star_question(
     ast_type: PSQ,
     pos: usize,
 ) -> Result<(), ParseError> {
-    let Some(prev) = seq.pop() {
+    if let Some(prev) = seq.pop() {
         let ast = match ast_type {
             PSQ::Plus => AST::Plus(Box::new(prev)),
             PSQ::Star => AST::Star(Box::new(prev)),
@@ -98,7 +98,7 @@ fn fold_or(mut seq_or: Vec<AST>) -> Option<AST> {
         let mut ast = seq_or.pop().unwrap();
         seq_or.reverse();
         for s in seq_or {
-            ast = AST:Or(Box::new(s), Box::new(ast));
+            ast = AST::Or(Box::new(s), Box::new(ast));
         }
         Some(ast)
     } else {
@@ -107,11 +107,11 @@ fn fold_or(mut seq_or: Vec<AST>) -> Option<AST> {
     }
 }
 
-pub fn parse(expr: &str) -> Result<AST, ParseErro> {
+pub fn parse(expr: &str) -> Result<AST, ParseError> {
     // 内部状態を表現するための型 (1)
     // Char 状態：文字列処理中
     // Escape 状態：エスケープシーケンス処理中
-    enum ParserState {
+    enum ParseState {
         Char,
         Escape,
     }
@@ -153,13 +153,13 @@ pub fn parse(expr: &str) -> Result<AST, ParseErro> {
                             seq_or = prev_or;
                         } else {
                             // "abc)" のように開き括弧がないのに閉じ括弧がある場合はエラー
-                            return Err(Box::new(ParseError::InvalidEscape(i)));
+                            return Err(ParseError::InvalidRightParen(i));
                         }
                     }
                     '|' => {
                         if seq.is_empty() { // (7)
                             // "||", "(|abc)" などと、式が空の場合はエラー
-                            return Err(Box::new(ParseError::NoPrev(i)));
+                            return Err(ParseError::NoPrev(i));
                         } else {
                             let prev = take(&mut seq);
                             seq_or.push(AST::Seq(prev));
@@ -169,9 +169,9 @@ pub fn parse(expr: &str) -> Result<AST, ParseErro> {
                     _ => seq.push(AST::Char(c)),        // (9)
                 };
             }
-            Parse::Escape => {
+            ParseState::Escape => {
                 // エスケープシーケンス処理 (10)
-                let ast = parse.escape(i, c)?;
+                let ast = parse_escape(i, c)?;
                 seq.push(ast);
                 state = ParseState::Char;
             }
@@ -180,7 +180,7 @@ pub fn parse(expr: &str) -> Result<AST, ParseErro> {
 
     // 閉じ括弧が足りない場合はエラー
     if !stack.is_empty() {
-        return Err(Box::new(ParseError::NoRightParen));
+        return Err(ParseError::NoRightParen);
     }
 
     // "()" のように、式が空の場合は push しない
@@ -192,6 +192,6 @@ pub fn parse(expr: &str) -> Result<AST, ParseErro> {
     if let Some(ast) = fold_or(seq_or) {
         Ok(ast)
     } else {
-        Err(Box::new(ParseError::Empty))
+        Err(ParseError::Empty)
     }
 }
