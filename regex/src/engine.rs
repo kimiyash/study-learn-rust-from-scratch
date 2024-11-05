@@ -57,7 +57,7 @@ pub fn print(expr: &str) -> Result<(), DynError> {
 /// # 利用例
 ///
 /// ```
-/// use regex:
+/// use regex;
 /// regex::do_matching("abc|(de|cd)+", "decddede", true);
 /// ```
 ///
