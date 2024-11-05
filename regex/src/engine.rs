@@ -1,3 +1,10 @@
+mod codegen;
+mod evaluater;
+mod parser;
+
+use crate::helper::DynError;
+use std::fmt::{self. Display}
+
 #[derive(Debug)]
 pub enum Instruction {
     Char(char),
@@ -18,3 +25,29 @@ impl Display for Instruction {
     }
 }
 
+/// 正規表現と文字列をマッチング
+///
+/// # 利用例
+///
+/// ```
+/// use regex:
+/// regex::do_matching("abc|(de|cd)+", "decddede", true);
+/// ```
+///
+/// # 引数
+///
+/// expr に正規表現、lineにマッチ対象とする文字列をあたえる。
+/// is_depth が true の場合は深さ優先探索を、false の場合は幅優先探索を利用
+///
+/// # 返り値
+///
+/// エラーなく実行でき、かつマッチングに**成功**した場合は Ok(ture) を返し
+/// エラーなく実行でき、まつマッチングに**失敗**した場合は Ok(false) を返す。
+///
+/// 入力された正規表現にエラーがあったり、内部的な実装エラーがある場合は Err を返す。
+pub fn do_matching(exp: &str, line, &str, is_depth: bool) -> Result<bool, DynError> {
+    let ast = parser::parse(expr)?
+    let code = codegen::get_code(&ast)?;
+    let line = line.chars().collect::<Vec<char>>();
+    Ok(evaluator::eval(&code, &line, is_depth)?)
+}

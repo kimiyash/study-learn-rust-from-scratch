@@ -29,6 +29,14 @@ struct Generator {
     insts: Vec<Instruction>,
 }
 
+/// コード生成を行う関数
+pub fn get_code(ast: &AST) -> Result<Vec<Instruction>, CodeGenError> {
+    let mut generator = Generator::default();
+    generator.gen_code(ast)?;
+    Ok(generator.insts)
+}
+
+/// コード生成器のメソッド定義
 impl Generator {
     /// コード生成を行う関数の入り口
     fn gen_code(&mut self, ast: &AST) -> Result<(), CodeGenError> {
